@@ -1,0 +1,142 @@
+{
+  "name": "overloading_of_resources_in_apache_airflow",
+  "description": "This incident type involves managing the level of parallelism and concurrency for tasks in Apache Airflow to prevent overloading of system resources. Apache Airflow is a platform used for scheduling and monitoring workflows. When the level of parallelism or concurrency is too high, it can cause resource exhaustion, leading to failure of tasks or even the entire system. This incident requires careful management of the number of tasks that can run simultaneously and the resources they require to ensure smooth performance of the system.",
+  "params": [
+    {
+      "name": "AIRFLOW_NAMESPACE",
+      "value": ""
+    },
+    {
+      "name": "DEPLOYMENT_NAME",
+      "value": ""
+    },
+    {
+      "name": "DESIRED_PARALLELISM",
+      "value": ""
+    },
+    {
+      "name": "DESIRED_CONCURRENCY",
+      "value": ""
+    },
+    {
+      "name": "POD_NAME",
+      "value": ""
+    },
+    {
+      "name": "SCHEDULER_POD_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Overloading of Resources in Apache Airflow\nThis incident type involves managing the level of parallelism and concurrency for tasks in Apache Airflow to prevent overloading of system resources. Apache Airflow is a platform used for scheduling and monitoring workflows. When the level of parallelism or concurrency is too high, it can cause resource exhaustion, leading to failure of tasks or even the entire system. This incident requires careful management of the number of tasks that can run simultaneously and the resources they require to ensure smooth performance of the system."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## List all running pods in the Airflow namespace"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl get pods -n ${AIRFLOW_NAMESPACE}`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## View the logs of a specific pod"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl logs ${POD_NAME} -n ${AIRFLOW_NAMESPACE}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the status of the Airflow scheduler"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE | `kubectl exec ${SCHEDULER_POD_NAME} -n ${AIRFLOW_NAMESPACE} airflow list_dags`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the resource usage of a specific pod"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl top pods ${POD_NAME} -n ${AIRFLOW_NAMESPACE}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the resource usage of all pods in the Airflow namespace"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl top pods -n ${AIRFLOW_NAMESPACE}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the resource requests and limits for a specific pod"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl describe pod ${POD_NAME} -n ${AIRFLOW_NAMESPACE}`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the resource requests and limits for all pods in the Airflow namespace"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | limit=1 | random=1 | `kubectl describe pods -n ${AIRFLOW_NAMESPACE}`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Review the current parallelism and concurrency settings in Apache Airflow and adjust them to a level that can be supported by the available system resources."
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "pod | k8s_cluster_name=$K8S_CLUSTER_NAME | app='shoreline' | random=1 | limit=1 | invoke_update_deployment($AIRFLOW_NAMESPACE, $DEPLOYMENT_NAME, $DESIRED_PARALLELISM, $DESIRED_CONCURRENCY, $NAMESPACE)"
+    }
+  ]
+}
